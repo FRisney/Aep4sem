@@ -79,7 +79,7 @@ class Database extends Config
     public function __construct()
     {
         parent::__construct();
-
+        $this->default['DSN'] = getenv('DATABASE_URL');
         // Ensure that we always set the database group to 'tests' if
         // we are currently running an automated test suite, so that
         // we don't overwrite live data on accident.
