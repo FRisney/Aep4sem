@@ -125,3 +125,5 @@ nb-configuration.xml
 /phpunit*.xml
 /.phpunit.*.cache
 
+app/writable/logs/log-2021-11-07.log
+app/writable/cache/index.html
