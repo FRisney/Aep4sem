@@ -79,7 +79,10 @@ class Database extends Config
     public function __construct()
     {
         parent::__construct();
-
+	$this->default['username'] = $_ENV['PG_USERNAME'];
+	$this->default['password'] = $_ENV['PG_PASSWORD'];
+	$this->default['database'] = $_ENV['PG_DATABASE'];
+	$this->default['port']     = $_ENV['PG_PORT'];
         // Ensure that we always set the database group to 'tests' if
         // we are currently running an automated test suite, so that
         // we don't overwrite live data on accident.
