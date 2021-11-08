@@ -10,9 +10,10 @@ services:
       - db-data:/var/lib/postgresql/data
 
   php:
-    image:
-      context:
+    build:
+      context: .
       dockerfile: Dockerfile-php
+    image: aep4sem-php
     ports:
       - 80:80
     environment:
