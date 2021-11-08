@@ -1,0 +1,17 @@
+FROM php:8.0-apache
+
+RUN mkdir -p /app/public
+COPY ./app /app
+
+WORKDIR /app
+
+RUN chmod 776 writable/cache
+
+RUN apt-get update && apt-get install -y libicu-dev libpq-dev
+
+RUN docker-php-ext-configure pgsql && docker-php-ext-install intl pgsql
+
+ENV APACHE_DOCUMENT_ROOT /app/public
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf

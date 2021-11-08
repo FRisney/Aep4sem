@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=psswd
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  php:
+    image:
+      context:
+      dockerfile: Dockerfile-php
+    ports:
+      - 80:80
+    environment:
+      - CI_ENVIRONMENT=development
+      - PG_USERNAME=postgres
+      - PG_PASSWORD=psswd
+      - PG_DATABASE=postgres
+      - PG_PORT=5432
+volumes:
+  db-data:
+    driver: local
+
