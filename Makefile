@@ -1,7 +1,13 @@
 deps:
 	@cd ./app; composer install
 
-init: deps up ips
+init: deps volume up ips
+
+volume:
+	@sed -E 's|\{pwd\}|$(shell pwd)|' compose.yaml > new.yaml
+	@rm -f compose.yaml
+	@mv new.yaml compose.yaml
+	@chmod 777 app/writable/cache
 
 up:
 	@docker-compose up -d

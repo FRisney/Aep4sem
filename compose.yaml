@@ -22,6 +22,8 @@ services:
       - PG_PASSWORD=psswd
       - PG_DATABASE=postgres
       - PG_PORT=5432
+    volumes:
+      - {pwd}/app:/app
 volumes:
   db-data:
     driver: local

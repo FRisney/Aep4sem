@@ -1,7 +1,7 @@
 FROM php:8.0-apache
 
-RUN mkdir -p /app/public
-COPY ./app /app
+RUN mkdir /app
+# COPY ./app /app
 
 WORKDIR /app
 
