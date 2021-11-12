@@ -23,7 +23,7 @@ services:
       - PG_DATABASE=postgres
       - PG_PORT=5432
     volumes:
-      - {pwd}/app:/app
+      - /home/felipe/dev/Aep4sem/app:/app
 volumes:
   db-data:
     driver: local

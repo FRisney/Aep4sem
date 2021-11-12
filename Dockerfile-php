@@ -5,7 +5,7 @@ RUN mkdir /app
 
 WORKDIR /app
 
-RUN chmod 776 writable/cache
+# RUN chmod 776 writable/cache
 
 RUN apt-get update && apt-get install -y libicu-dev libpq-dev
 
