@@ -78,6 +78,13 @@ class Database extends Config
 
     public function __construct()
     {
+        $parsed = parse_url(getenv('DATABASE_URL'));
+        $this->default['hostname'] = $parsed['host'];
+        $this->default['DBDriver'] = 'Postgre';
+        $this->default['password'] = $parsed['pass'];
+        $this->default['username'] = $parsed['user'];
+        $this->default['port'] = $parsed['port'];
+        $this->default['database'] = str_replace('/','',$parsed['path']);
         parent::__construct();
         // Ensure that we always set the database group to 'tests' if
         // we are currently running an automated test suite, so that
