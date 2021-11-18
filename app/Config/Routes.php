@@ -34,7 +34,9 @@ $routes->setAutoRoute(false);
 $routes->get('/', 'Home::index');
 $routes->group('users', function () use ($routes){
     $routes->post('new','UsuarioController::new');
-    $routes->post('update','UsuarioController::update');
+    $routes->group('',['filter' => 'basicauth'], function () use ($routes) {
+        $routes->post('update', 'UsuarioController::update');
+    });
 });
 /*
  * --------------------------------------------------------------------
