@@ -35,7 +35,9 @@ $routes->get('/', 'Home::index');
 $routes->group('users', function () use ($routes){
     $routes->post('new','UsuarioController::new');
     $routes->group('',['filter' => 'basicauth'], function () use ($routes) {
-        $routes->post('update', 'UsuarioController::update');
+        $routes->get('(:num)','UsuarioController::detalhes/$1');
+        $routes->put('(:num)', 'UsuarioController::update/$1');
+        $routes->delete('(:num)', 'UsuarioController::delete/$1');
     });
 });
 $routes->group('animal',function() use ($routes){

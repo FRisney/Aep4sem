@@ -24,34 +24,53 @@ class UsuarioController extends BaseController
     public function new()
     {
         if (!$this->request->hasHeader('Content-Type') || $this->request->header('Content-Type')->getValue() != 'application/json'){
-            return $this->fail('Nao foi possivel salvar endereco', 406);
+            return $this->fail('Conteudo nao e json', 406);
         }
 
         $data = $this->request->getJSON(true);
 
         $endereco = new Endereco();
-        if(!$endereco->insert($data['endereco'])){
-            return $this->fail('Nao foi possivel salvar endereco', 400);
+        if($this->pessoa->getWhere(['cpf'=>$data['pessoa']['cpf']])->getResultArray()){
+            return $this->failResourceExists('Pessoa ja cadastrada');
+        }
+        if($this->usuario->getWhere(['email'=>$data['usuario']['email']])->getResultArray()){
+            return $this->failResourceExists('Email ja cadastrado');
         }
 
-        $data['pessoa']['id_endereco'] = $endereco->getInsertID();
-        $pessoa = new Pessoa();
-        if(!$pessoa->insert( $data['pessoa'] ))
-        {
-            return $this->fail('Nao foi possivel salvar pessoa', 400);
-        }
-
-        $data['usuario']['senha'] = password_hash($data['usuario']['senha'], PASSWORD_BCRYPT);
-        $data['usuario']['id_pessoa'] = $pessoa->getInsertID();
-        if(!$this->usuario->insert( $data['usuario'] ))
-        {
-            return $this->fail('Nao foi possivel salvar usuario', 400);
+        try {
+            $endereco->insert($data['endereco']);
+            $data['pessoa']['id_endereco'] = $data['endereco']['id_endereco'] = $endereco->getInsertID();
+            $this->pessoa->insert($data['pessoa']);
+            $data['usuario']['senha'] = password_hash($data['usuario']['senha'], PASSWORD_BCRYPT);
+            $data['usuario']['id_pessoa'] = $data['pessoa']['id_pessoa'] = $this->pessoa->getInsertID();
+            $this->usuario->insert($data['usuario']);
+        } catch (\Throwable $th) {
+            return $this->fail($th->getMessage());
         }
 
         return $this->respondCreated($data);
     }
 
-    public function update()
+    public function detalhes($id){
+        $usr = $this->usuario->find($id);
+        if (!$usr)
+            return $this->failResourceGone('usr');
+        $psa = $this->pessoa->find($usr['id_pessoa']);
+        if(!$psa)
+            return $this->failResourceGone('pessoa');
+        $end = (new Endereco())->find($psa['id_endereco']);
+        if(!$end)
+            return $this->failResourceGone('endereco');
+
+        $this->response->setJSON([
+            'usuario'=>$usr,
+            'pessoa'=>$psa,
+            'endereco'=>$end,
+        ]);
+        $this->response->send();
+    }
+
+    public function update($id)
     {
         if (!$this->request->hasHeader('Content-Type') || $this->request->header('Content-Type')->getValue() != 'application/json'){
             return $this->fail('Nao foi possivel salvar endereco', 406);
@@ -59,28 +78,45 @@ class UsuarioController extends BaseController
 
         $data = $this->request->getJSON(true);
 
-        $endereco = new Endereco();
-        if(!$endereco->update($data['endereco'])){
-            return $this->fail('Nao foi possivel salvar endereco', 400);
-        }
+        $usr = $this->usuario->find($id);
+        if(!$usr) return $this->failResourceGone('user');
 
-        $pessoa = new Pessoa();
-        if(!$pessoa->update( $data['pessoa'] ))
-        {
-            return $this->fail('Nao foi possivel salvar pessoa', 400);
-        }
+        $psa = $this->pessoa->find($usr['id_pessoa']);
+        if(!$psa) return $this->failResourceGone('pessoa');
 
-        $data['usuario']['senha'] = password_hash($data['usuario']['senha'], PASSWORD_BCRYPT);
-        if(!$this->usuario->update( $data['usuario'] ))
-        {
-            return $this->fail('Nao foi possivel salvar usuario', 400);
+        try{
+            $data['usuario']['senha'] = password_hash($data['usuario']['senha'], PASSWORD_BCRYPT);
+            $this->usuario->update($id, $data['usuario']);
+            $this->pessoa->update($usr['id_pessoa'],$data['pessoa']);
+            $endereco = new Endereco();
+            $endereco->update($psa['id_endereco'],$data['endereco']);
+        }catch(\Throwable $th){
+            return $this->fail($th->getMessage());
         }
 
         return $this->respond($data, 200);
     }
 
-//    public function delete()
-//    {
-//       $this->usuario->delete($this->request->get)
-//    }
+    public function delete($id)
+    {
+        $usr = $this->usuario->find($id);
+        if (!$usr)
+            return $this->failResourceGone('usr');
+        $psa = $this->pessoa->find($usr['id_pessoa']);
+        if(!$psa)
+            return $this->failResourceGone('pessoa');
+        $end = (new Endereco())->find($psa['id_endereco']);
+        if(!$end)
+            return $this->failResourceGone('endereco');
+
+        $this->usuario->delete($usr['id_usuario']);
+        $this->pessoa->delete($psa['id_pessoa']);
+        (new Endereco())->delete($end['id_endereco']);
+        $this->response->setJSON([
+            'usuario'=>$usr,
+            'pessoa'=>$psa,
+            'endereco'=>$end,
+        ]);
+        $this->response->send();
+    }
 }
