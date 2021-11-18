@@ -32,7 +32,7 @@ $routes->setAutoRoute(false);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
-$routes->group('users', function () use ($routes){
+$routes->group('usuario', function () use ($routes){
     $routes->post('new','UsuarioController::new');
     $routes->group('',['filter' => 'basicauth'], function () use ($routes) {
         $routes->get('(:num)','UsuarioController::detalhes/$1');
@@ -56,6 +56,15 @@ $routes->group('adocao',function() use ($routes){
         $routes->post('new','AdocaoController::new');
         $routes->put('(:num)','AdocaoController::update/$1');
         $routes->delete('(:num)','AdocaoController::delete/$1');
+    });
+});
+$routes->group('ocorrencia',function() use ($routes){
+    $routes->get('','OcorrenciaController::list');
+    $routes->get('(:num)','OcorrenciaController::detalhes/$1');
+    $routes->group('',['filter'=>'basicauth'],function () use ($routes){
+        $routes->post('new','OcorrenciaController::new');
+        $routes->put('(:num)','OcorrenciaController::update/$1');
+        $routes->delete('(:num)','OcorrenciaController::delete/$1');
     });
 });
 /*
