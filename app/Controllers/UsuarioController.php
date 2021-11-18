@@ -62,12 +62,11 @@ class UsuarioController extends BaseController
         if(!$end)
             return $this->failResourceGone('endereco');
 
-        $this->response->setJSON([
+        return $this->respond([
             'usuario'=>$usr,
             'pessoa'=>$psa,
             'endereco'=>$end,
         ]);
-        $this->response->send();
     }
 
     public function update($id)
@@ -112,11 +111,11 @@ class UsuarioController extends BaseController
         $this->usuario->delete($usr['id_usuario']);
         $this->pessoa->delete($psa['id_pessoa']);
         (new Endereco())->delete($end['id_endereco']);
-        $this->response->setJSON([
+
+        return $this->respond([
             'usuario'=>$usr,
             'pessoa'=>$psa,
             'endereco'=>$end,
         ]);
-        $this->response->send();
     }
 }

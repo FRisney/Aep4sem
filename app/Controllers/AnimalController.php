@@ -26,8 +26,7 @@ class AnimalController extends BaseController
         if(!$data || empty($data)){
             $this->respondNoContent();
         }
-        $this->response->setJSON($data);
-        $this->response->send();
+        return $this->respond($data);
     }
 
     public function detalhes($id){

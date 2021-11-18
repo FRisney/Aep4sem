@@ -56,7 +56,7 @@ class AdocaoController extends BaseController
             return $this->failResourceGone('Animal nao cadastrado');
         }
 
-        if($data['datahora'] == null || empty($data['datahora'])){
+        if($data['status'] == null || empty($data['status'])){
             return $this->fail('Sem status');
         }
         if($data['datahora'] == null || empty($data['datahora'])){
