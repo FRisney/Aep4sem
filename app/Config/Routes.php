@@ -49,6 +49,15 @@ $routes->group('animal',function() use ($routes){
         $routes->delete('(:num)','AnimalController::delete/$1');
     });
 });
+$routes->group('adocao',function() use ($routes){
+    $routes->get('','AdocaoController::list');
+    $routes->get('(:num)','AdocaoController::detalhes/$1');
+    $routes->group('',['filter'=>'basicauth'],function () use ($routes){
+        $routes->post('new','AdocaoController::new');
+        $routes->put('(:num)','AdocaoController::update/$1');
+        $routes->delete('(:num)','AdocaoController::delete/$1');
+    });
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing
