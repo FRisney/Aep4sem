@@ -38,6 +38,15 @@ $routes->group('users', function () use ($routes){
         $routes->post('update', 'UsuarioController::update');
     });
 });
+$routes->group('animal',function() use ($routes){
+    $routes->get('','AnimalController::list');
+    $routes->get('(:num)','AnimalController::detalhes/$1');
+    $routes->group('',['filter'=>'basicauth'],function () use ($routes){
+        $routes->post('new','AnimalController::new');
+        $routes->put('(:num)','AnimalController::update/$1');
+        $routes->delete('(:num)','AnimalController::delete/$1');
+    });
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing
