@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\Animal;
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\Files\File;
 
 class AnimalController extends BaseController
 {
@@ -21,8 +22,12 @@ class AnimalController extends BaseController
         $from = $this->request->getGet('from',FILTER_VALIDATE_INT) ?? 1;
         $qtd = $this->request->getGet('qtd',FILTER_VALIDATE_INT) ?? 10;
 
-        $data = $this->model->getWhere(['id_animal >='=>$from],$qtd)->getResultArray();
-        
+        $data = $this->model
+            ->select('animais.id_animal, nome, peso, idade, porte, especie, status, conteudo')
+            ->join('imagens','imagens.id_animal = animais.id_animal','left')
+            ->get($qtd,$from)
+            ->getResultArray();
+
         if(!$data || empty($data)){
             $this->respondNoContent();
         }
